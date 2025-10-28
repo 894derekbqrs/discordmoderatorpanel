@@ -6,7 +6,11 @@
   <title>Voice Chat Moderator Panel — DEMO (Not Real)</title>
   <style>
     :root{
-      --bg:#0e1116; --card:#11161b; --muted:#9aa4b2; --accent:#6b9cff; --danger:#ff6b6b;
+      --bg:#0e1116;
+      --card:#11161b;
+      --muted:#9aa4b2;
+      --accent:#6b9cff;
+      --danger:#ff6b6b;
       font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
     *{box-sizing:border-box}
@@ -73,27 +77,27 @@
     <header class="demo-banner">
       <div>
         <span style="font-weight:900;color:#fff;margin-right:8px">VOICE CHAT MOD PANEL — DEMO</span>
-        <span class="small">Not affiliated with any real service — For roleplay / presentation only</span>
+        <span class="small">Clearly labeled demo — not affiliated with any real service</span>
       </div>
-      <div class="badge">DEMO • DO NOT IMPERSONATE</div>
+      <div class="badge">DEMO • FOR ROLEPLAY</div>
     </header>
 
     <!-- LEFT: channels -->
     <aside class="card" aria-hidden="false">
       <div class="server">
-        <div class="logo">VR</div>
+        <div class="logo">MP</div>
         <div>
-          <div style="font-weight:900">Example Server — Demo</div>
-          <div class="small">#voice-activity</div>
+          <div style="font-weight:900">Community Demo</div>
+          <div class="small">#voice-lounge</div>
         </div>
       </div>
 
       <div style="margin-top:8px">
         <h3 style="margin:6px 0 8px 0;color:var(--muted)">Voice Channels</h3>
         <div class="channels" id="channelList" aria-live="polite">
-          <div class="channel"><div><div class="name">Casual VC</div><div class="small">5 members</div></div><div>🔊</div></div>
-          <div class="channel"><div><div class="name">Event Stage</div><div class="small">2 members</div></div><div>🎤</div></div>
-          <div class="channel"><div><div class="name">AFK</div><div class="small">0 members</div></div><div>💤</div></div>
+          <div class="channel"><div><div class="name">Lounge</div><div class="small">approx. 6 present</div></div><div>🔊</div></div>
+          <div class="channel"><div><div class="name">Stage</div><div class="small">approx. 2 present</div></div><div>🎤</div></div>
+          <div class="channel"><div><div class="name">AFK</div><div class="small">0 present</div></div><div>💤</div></div>
         </div>
       </div>
 
@@ -101,9 +105,9 @@
         <h3 style="margin:6px 0;color:var(--muted)">Quick Actions</h3>
         <div style="display:flex;gap:8px">
           <button class="btn" onclick="simulate('announce')">Post Notice</button>
-          <button class="btn" onclick="simulate('lock')">Lock Channel</button>
+          <button class="btn" onclick="simulate('lock')">Toggle Join Lock</button>
         </div>
-        <footer class="attribution">Demo UI — for roleplay</footer>
+        <footer class="attribution">Demo panel — for presentation and roleplay</footer>
       </div>
     </aside>
 
@@ -111,8 +115,8 @@
     <main class="card" role="main">
       <div class="vc-header">
         <div>
-          <div class="vc-title">Now Listening — Casual VC</div>
-          <div class="small">Live voice activity simulation</div>
+          <div class="vc-title">Now Live — Lounge</div>
+          <div class="small">Voice activity simulation (demo)</div>
         </div>
         <div class="controls">
           <button class="btn" onclick="toggleRecording()">Recording</button>
@@ -123,20 +127,20 @@
       <div style="flex:1;display:flex;flex-direction:column;">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div class="small">Participants</div>
-          <div class="small">Click actions to simulate — demo only</div>
+          <div class="small">Actions are simulated — demo only</div>
         </div>
 
         <div class="participants" id="participants" aria-live="polite" style="margin-top:8px">
-          <!-- injected -->
+          <!-- participants injected by JS -->
         </div>
       </div>
     </main>
 
     <!-- RIGHT: log -->
     <aside class="card" aria-label="Activity log">
-      <div style="font-weight:900">Moderator Activity Log</div>
+      <div style="font-weight:900">Activity Log (Demo)</div>
       <div class="log" id="log">
-        <p style="color:var(--muted)">No activity yet. Interact with the participant controls to generate log entries.</p>
+        <p style="color:var(--muted)">No activity yet. Use the participant controls to simulate moderator actions.</p>
       </div>
 
       <div style="margin-top:auto;display:flex;gap:8px">
@@ -147,13 +151,13 @@
   </div>
 
   <script>
-    // Demo participants (modifiable)
+    // Generic, non-identifying participants for believable demo
     const demoParticipants = [
-      {id:1, name:"Avery", role:"Member", status:"speaking", avatar:"AV"},
-      {id:2, name:"Riley", role:"Member", status:"muted", avatar:"RI"},
-      {id:3, name:"Jordan", role:"Moderator", status:"speaking", avatar:"JO"},
-      {id:4, name:"Taylor", role:"Member", status:"idle", avatar:"TA"},
-      {id:5, name:"Casey", role:"Member", status:"requesting", avatar:"CA"}
+      {id:1, label:"Host", role:"Host", status:"speaking", avatar:"H1"},
+      {id:2, label:"Participant 1", role:"Member", status:"speaking", avatar:"P1"},
+      {id:3, label:"Participant 2", role:"Member", status:"idle", avatar:"P2"},
+      {id:4, label:"Guest 1", role:"Member", status:"muted", avatar:"G1"},
+      {id:5, label:"Guest 2", role:"Member", status:"requesting", avatar:"G2"}
     ];
 
     const participantsContainer = document.getElementById('participants');
@@ -179,15 +183,15 @@
           <div style="display:flex;align-items:center;gap:10px">
             <div class="avatar" aria-hidden="true">${p.avatar}</div>
             <div style="min-width:0">
-              <div class="p-info"><div class="name">${escapeHtml(p.name)} ${p.role === 'Moderator' ? '<span style="color:#7fd6b6;margin-left:8px;font-weight:800">MOD</span>' : ''}</div></div>
+              <div class="p-info"><div class="name">${escapeHtml(p.label)} ${p.role === 'Host' ? '<span style="color:#7fd6b6;margin-left:8px;font-weight:800">HOST</span>' : ''}</div></div>
               <div class="small" style="margin-top:4px">${escapeHtml(p.status)}</div>
             </div>
           </div>
           <div style="display:flex;gap:6px">
             <button class="icon-btn" title="Mute" onclick="actionMute(${p.id})">🔇</button>
             <button class="icon-btn" title="Timeout" onclick="actionTimeout(${p.id})">⏱</button>
-            <button class="icon-btn" title="Kick" onclick="actionKick(${p.id})">🚫</button>
-            <button class="icon-btn" title="Warn" onclick="actionWarn(${p.id})">⚠️</button>
+            <button class="icon-btn" title="Remove" onclick="actionRemove(${p.id})">🚫</button>
+            <button class="icon-btn" title="Note" onclick="actionNote(${p.id})">⚠️</button>
           </div>
         `;
         participantsContainer.appendChild(el);
@@ -200,36 +204,36 @@
       const p = findParticipant(id);
       if(!p) return;
       p.status = p.status === 'muted' ? 'idle' : 'muted';
-      addLog(`${p.name} was ${p.status === 'muted' ? 'muted' : 'unmuted'} (simulated).`);
+      addLog(`${p.label} ${p.status === 'muted' ? 'muted' : 'unmuted'} (simulated).`);
       renderParticipants();
     }
     function actionTimeout(id){
       const p = findParticipant(id);
       if(!p) return;
-      p.status = 'timed out';
-      addLog(`${p.name} received a temporary timeout.`, 'warn');
+      p.status = 'temporarily restricted';
+      addLog(`${p.label} placed in temporary restriction (simulated).`, 'warn');
       renderParticipants();
     }
-    function actionKick(id){
+    function actionRemove(id){
       const p = findParticipant(id);
       if(!p) return;
       p.status = 'removed';
-      addLog(`${p.name} was removed from the voice channel.`, 'danger');
+      addLog(`${p.label} removed from the channel (simulated).`, 'danger');
       renderParticipants();
     }
-    function actionWarn(id){
+    function actionNote(id){
       const p = findParticipant(id);
       if(!p) return;
-      addLog(`Warning issued to ${p.name} for disruptive behavior.`, 'warn');
+      addLog(`Moderator note recorded for ${p.label}.`, 'warn');
     }
 
     function simulate(what){
-      if(what === 'announce') addLog('Pinned announcement: "Reminder — follow server rules."', 'warn');
-      if(what === 'lock') addLog('Channel locked for new joiners.', 'warn');
+      if(what === 'announce') addLog('Announcement pinned: "Please respect others and follow community guidelines."', 'warn');
+      if(what === 'lock') addLog('Join lock toggled for the channel (simulated).', 'warn');
     }
 
     function clearLog(){
-      logEl.innerHTML = '<p style="color:var(--muted)">No activity yet. Interact with the participant controls to generate log entries.</p>';
+      logEl.innerHTML = '<p style="color:var(--muted)">No activity yet. Use the participant controls to simulate moderator actions.</p>';
     }
 
     function exportLog(){
@@ -238,7 +242,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'moderator-demo-log.txt';
+      a.download = 'demo-activity-log.txt';
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -247,18 +251,18 @@
     }
 
     function toggleRecording(){
-      addLog('Recording toggled (demo).');
+      addLog('Recording toggled (simulated).');
       alert('Recording simulated — demo only.');
     }
     function openTools(){
-      addLog('Moderator tools opened (demo).');
+      addLog('Moderator tools opened (simulated).');
       alert('Moderator tools — this is a demo UI and does not connect to any real service.');
     }
 
-    // keyboard convenience for demo
+    // keyboard convenience
     document.addEventListener('keydown', (e) => {
-      if(e.key === 'r') addLog('Quick simulate: random message posted.');
-      if(e.key === 'm'){ findParticipant(2).status = 'muted'; renderParticipants(); addLog('Riley muted (hotkey).'); }
+      if(e.key === 'r') addLog('Quick simulate: a generic message was posted.');
+      if(e.key === 'm'){ const p = findParticipant(2); if(p){ p.status='muted'; renderParticipants(); addLog(p.label + ' muted (hotkey).'); } }
     });
 
     // initial render
